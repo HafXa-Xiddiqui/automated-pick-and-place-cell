@@ -1,0 +1,58 @@
+# ROS2 colcon build artifacts
+build/
+install/
+log/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# CMake build files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.cmake
+
+# VSCode configs (optional but recommended ignore)
+.vscode/
+.vscode/*
+!.vscode/settings.json
+
+# CLion / JetBrains
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup / swap files
+*~
+*.swp
+*.swo
+
+# Generated documentation
+docs/_build/
+
+# Launch/install temporary stuff
+colcon_cd_shell/
+colcon_command_history
+
+# Python virtualenvs
+venv/
+.env/
+
+# Logs from nodes
+*.log
+*.bag
+*.sqlite3
+
+# Other editor folders
+*.iml
+
+# C++/IDE build dirs
+out/
+bin/
+lib/
