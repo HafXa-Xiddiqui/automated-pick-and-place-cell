@@ -1,9 +1,9 @@
-
 # Automated Pick-and-Place Cell
 
 ## Overview
 
-This project implements a ROS2-based automated pick-and-place cell. The system simulates a robotic workflow where items are placed on a scanning table, scanned for barcodes, and then sorted into pockets or reject areas using a pusher mechanism.
+This project implements a ROS2-based automated pick-and-place cell.  
+The system simulates a robotic workflow where items are placed on a scanning table, scanned for barcodes, and then sorted into pockets or reject areas using a pusher mechanism.
 
 The system is modular and uses multiple ROS2 nodes to represent individual hardware components and logical controllers.
 
@@ -15,21 +15,19 @@ The system is modular and uses multiple ROS2 nodes to represent individual hardw
 
 Automated_pick_and_place_cell/
 ├── README.md
-├── ros2_ws/
-│   ├── src/
-│   │   ├── scan_table_manager/    # Central controller node handling FSM
-│   │   ├── mock_robot/            # Simulates the robot placing items
-│   │   ├── mock_scanner/          # Simulates barcode scanner(s)
-│   │   ├── mock_pusher/           # Simulates the pusher mechanism
-│   │   └── mock_table_sensor/     # Simulates table occupancy sensor
-│   ├── install/      # Generated after building workspace
-│   ├── build/        # Generated during build
-│   └── log/          # Runtime logs
-└── .gitignore
+├── src/
+│   ├── scan_table_manager/    # Central controller node handling FSM
+│   ├── mock_robot/            # Simulates the robot placing items
+│   ├── mock_scanner/          # Simulates barcode scanner(s)
+│   ├── mock_pusher/           # Simulates the pusher mechanism
+│   └── mock_table_sensor/     # Simulates table occupancy sensor
+├── install/      # Generated after building workspace
+├── build/        # Generated during build
+└── log/          # Runtime logs
 
 ````
 
-**Notes on structure:**
+**Notes:**
 - Each folder under `src/` is a separate ROS2 package.
 - `scan_table_manager` contains the main FSM controlling the workflow.
 - `mock_*` packages simulate hardware components for testing.
@@ -62,24 +60,23 @@ Automated_pick_and_place_cell/
 ## Build Instructions
 
 1. Source your ROS2 setup:
-
 ```bash
 source /opt/ros/<distro>/setup.bash
 ````
 
-2. Navigate to the workspace:
+2. Navigate to the project root:
 
 ```bash
-cd Automated_pick_and_place_cell/ros2_ws
+cd Automated_pick_and_place_cell
 ```
 
 3. Build the workspace:
 
 ```bash
-colcon build --symlink-install
+colcon build
 ```
 
-4. Source the workspace:
+4. Source the local setup:
 
 ```bash
 source install/setup.bash
@@ -87,60 +84,24 @@ source install/setup.bash
 
 ---
 
-## Running the System
+## Running the Nodes
 
-* Launch the `scan_table_manager`:
+You can launch the nodes individually for testing:
 
 ```bash
 ros2 run scan_table_manager scan_table_manager
-```
-
-* Launch mock nodes in separate terminals:
-
-```bash
 ros2 run mock_robot mock_robot
 ros2 run mock_scanner mock_scanner
 ros2 run mock_pusher mock_pusher
 ros2 run mock_table_sensor mock_table_sensor
 ```
 
-* The nodes communicate via ROS2 topics:
-
-  * `item_placed` → robot signals item placement
-  * `barcode` → scanner publishes barcode data
-  * `pusher_cmd` → FSM commands pusher (POCKET/REJECT)
-  * `pusher_done` → pusher signals completion
-  * `table_is_clear` → table sensor status
-  * `ready_for_next_item` → FSM signals robot readiness
-
----
-
-## Node Communication Overview
-
-1. Robot places an item → publishes `item_placed`.
-2. ScanTableManager enters SCANNING state → triggers scanners.
-3. Scanner(s) publish barcodes → ScanTableManager collects and deduplicates.
-4. After scan timeout → ScanTableManager decides POCKET or REJECT → sends `pusher_cmd`.
-5. Pusher executes → publishes `pusher_done`.
-6. ScanTableManager waits for table to be clear (`table_is_clear`).
-7. When table is clear → ScanTableManager publishes `ready_for_next_item`.
+Or create launch files for coordinated testing.
 
 ---
 
 ## Notes
 
-* System uses a state machine for predictable, safe operation.
-* All hardware is represented by mock nodes for testing; real drivers can replace them without changing FSM logic.
-* Scanners can be top-mounted and side-mounted to handle different barcode orientations.
-* Safety is enforced by checking table occupancy before accepting new items.
-* Logging is provided at every state transition for debugging and traceability.
-
----
-
-## Future Improvements
-
-* Integrate real hardware drivers for robot, scanner, and pusher.
-* Add ROS2 diagnostics and heartbeat monitoring for device health.
-* Add vision-based item validation and orientation checks.
-* Implement more robust error handling and fault states.
-
+* The system is designed to be modular; you can replace mock nodes with real hardware drivers.
+* Table occupancy safety checks ensure only one item is present at a time.
+* Barcode scanning can operate in either triggered or always-on mode.
