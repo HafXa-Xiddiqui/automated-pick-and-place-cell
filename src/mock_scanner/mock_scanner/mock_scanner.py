@@ -1,29 +1,32 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Bool, String
+from std_msgs.msg import String, Bool
 import random
+
+BARCODES = ["TCF150", "KPT568)", "PLLEO93", "BMVALDE912"]
 
 class MockScanner(Node):
     def __init__(self):
         super().__init__("mock_scanner")
-        self.sub = self.create_subscription(Bool, "/scanner/trigger", self.trigger_cb, 10)
-        self.pub = self.create_publisher(String, "/scanner/barcode", 10)
+        self.pub = self.create_publisher(String, "barcode", 10)
+        self.sub = self.create_subscription(Bool, "scanner_trigger", self.on_trigger, 10)
 
-    def trigger_cb(self, msg):
-        if msg.data:
-            if random.random() < 0.7:
-                for _ in range(random.randint(1, 3)):
-                    s = String()
-                    s.data = f"CODE_{random.randint(1000,9999)}"
-                    self.pub.publish(s)
-            else:
-                pass
+        self.scanning = False
+        self.timer = self.create_timer(0.5, self.publish_barcode)
+        self.get_logger().info("MockScanner started")
 
-def main():
-    rclpy.init()
+    def on_trigger(self, msg):
+        self.scanning = msg.data
+        self.get_logger().info(f"Scanner trigger: {self.scanning}")
+
+    def publish_barcode(self):
+        if self.scanning:
+            msg = String()
+            msg.data = random.choice(BARCODES)
+            self.pub.publish(msg)
+            self.get_logger().info(f"Publishing barcode: {msg.data}")
+
+def main(args=None):
+    rclpy.init(args=args)
     node = MockScanner()
     rclpy.spin(node)
-    rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()
