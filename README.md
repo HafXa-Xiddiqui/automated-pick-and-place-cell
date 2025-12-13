@@ -13,7 +13,7 @@ The system is modular and uses multiple ROS2 nodes to represent individual hardw
 
 ```
 
-Automated_pick_and_place_cell/
+automated_pick_and_place_cell/
 ├── README.md
 ├── src/
 │   ├── scan_table_manager/    # Central controller node handling FSM
@@ -50,24 +50,31 @@ Automated_pick_and_place_cell/
 
 ## Dependencies
 
-- ROS2 (Humble / Foxy / Rolling)
+- ROS2 (Humble)
 - C++17 for `scan_table_manager`
 - Python 3 for mock nodes
 - `std_msgs` ROS2 package
 
 ---
+## Getting Started
+
+Clone this repository:
+
+```bash
+git clone https://github.com/HafXa-Xiddiqui/automated-pick-and-place-cell.git
+````
 
 ## Build Instructions
 
 1. Source your ROS2 setup:
 ```bash
-source /opt/ros/<distro>/setup.bash
+source /opt/ros/humble/setup.bash
 ````
 
 2. Navigate to the project root:
 
 ```bash
-cd Automated_pick_and_place_cell
+cd automated_pick_and_place_cell
 ```
 
 3. Build the workspace:
@@ -96,7 +103,11 @@ ros2 run mock_pusher mock_pusher
 ros2 run mock_table_sensor mock_table_sensor
 ```
 
-Or create launch files for coordinated testing.
+Or 
+
+```bash
+ros2 launch scan_table_manager scan_table_system.launch.py
+```
 
 ---
 
