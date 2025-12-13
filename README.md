@@ -1,4 +1,4 @@
-```markdown
+
 # Automated Pick-and-Place Cell
 
 ## Overview
