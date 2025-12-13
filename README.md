@@ -61,7 +61,7 @@ automated_pick_and_place_cell/
 Clone this repository:
 
 ```bash
-git clone https://github.com/HafXa-Xiddiqui/automated-pick-and-place-cell.git
+git clone https://github.com/HafXa-Xiddiqui/automated_pick_and_place_cell.git
 ````
 
 ## Build Instructions
@@ -80,6 +80,7 @@ cd automated_pick_and_place_cell
 3. Build the workspace:
 
 ```bash
+cd src
 colcon build
 ```
 
