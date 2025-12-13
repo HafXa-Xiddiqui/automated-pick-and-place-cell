@@ -1,5 +1,3 @@
-Absolutely! Here’s a **ready-to-copy README.md** you can directly paste into your project:
-
 ```markdown
 # Automated Pick-and-Place Cell
 
@@ -16,7 +14,6 @@ The system is modular and uses multiple ROS2 nodes to represent individual hardw
 ```
 
 Automated_pick_and_place_cell/
-│
 ├── README.md
 ├── ros2_ws/
 │   ├── src/
@@ -25,11 +22,9 @@ Automated_pick_and_place_cell/
 │   │   ├── mock_scanner/          # Simulates barcode scanner(s)
 │   │   ├── mock_pusher/           # Simulates the pusher mechanism
 │   │   └── mock_table_sensor/     # Simulates table occupancy sensor
-│   │
 │   ├── install/      # Generated after building workspace
 │   ├── build/        # Generated during build
 │   └── log/          # Runtime logs
-│
 └── .gitignore
 
 ````
@@ -94,61 +89,58 @@ source install/setup.bash
 
 ## Running the System
 
-You can launch each node individually for testing:
-
-**Scan Table Manager:**
+* Launch the `scan_table_manager`:
 
 ```bash
 ros2 run scan_table_manager scan_table_manager
 ```
 
-**Mock Robot:**
+* Launch mock nodes in separate terminals:
 
 ```bash
 ros2 run mock_robot mock_robot
-```
-
-**Mock Scanner:**
-
-```bash
 ros2 run mock_scanner mock_scanner
-```
-
-**Mock Pusher:**
-
-```bash
 ros2 run mock_pusher mock_pusher
-```
-
-**Mock Table Sensor:**
-
-```bash
 ros2 run mock_table_sensor mock_table_sensor
 ```
 
+* The nodes communicate via ROS2 topics:
+
+  * `item_placed` → robot signals item placement
+  * `barcode` → scanner publishes barcode data
+  * `pusher_cmd` → FSM commands pusher (POCKET/REJECT)
+  * `pusher_done` → pusher signals completion
+  * `table_is_clear` → table sensor status
+  * `ready_for_next_item` → FSM signals robot readiness
+
 ---
 
-## Workflow
+## Node Communication Overview
 
-1. Robot places an item on the scan table (`mock_robot` publishes `item_placed`).
-2. ScanTableManager triggers scanners to collect barcodes.
-3. After a scanning window, barcodes are evaluated.
-4. The pusher (`mock_pusher`) is commanded to push the item to POCKET or REJECT.
-5. The system waits for the table to be clear (`mock_table_sensor`) before signaling readiness for the next item.
+1. Robot places an item → publishes `item_placed`.
+2. ScanTableManager enters SCANNING state → triggers scanners.
+3. Scanner(s) publish barcodes → ScanTableManager collects and deduplicates.
+4. After scan timeout → ScanTableManager decides POCKET or REJECT → sends `pusher_cmd`.
+5. Pusher executes → publishes `pusher_done`.
+6. ScanTableManager waits for table to be clear (`table_is_clear`).
+7. When table is clear → ScanTableManager publishes `ready_for_next_item`.
 
 ---
 
 ## Notes
 
-* The system is modular; new hardware nodes can be integrated without modifying the FSM.
-* Mock nodes allow testing without physical devices.
-* Logging provides traceability for debugging and testing.
+* System uses a state machine for predictable, safe operation.
+* All hardware is represented by mock nodes for testing; real drivers can replace them without changing FSM logic.
+* Scanners can be top-mounted and side-mounted to handle different barcode orientations.
+* Safety is enforced by checking table occupancy before accepting new items.
+* Logging is provided at every state transition for debugging and traceability.
 
-```
+---
 
-This version is **ready to paste** into your `README.md` and will display properly on GitHub or any Markdown viewer.  
+## Future Improvements
 
-If you want, I can also **add a simple ASCII diagram of the state machine and node communication** so it looks more professional for your interview submission.  
+* Integrate real hardware drivers for robot, scanner, and pusher.
+* Add ROS2 diagnostics and heartbeat monitoring for device health.
+* Add vision-based item validation and orientation checks.
+* Implement more robust error handling and fault states.
 
-Do you want me to do that?
-```
